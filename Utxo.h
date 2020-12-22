@@ -20,7 +20,6 @@ private:
 	void setScriptPubKey();
 
  private:
-	std::vector<unsigned char> m_vout;
 	std::vector<unsigned char> m_txid; 
 	Varint<std::vector<unsigned char>> m_inputValue;
 	std::vector<unsigned char> m_scriptPubKey;

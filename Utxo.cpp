@@ -11,7 +11,6 @@ UTXO::UTXO(Varint<std::vector<unsigned char>>& inputValue)
 UTXO::UTXO(const UTXO& src)
 {
 	m_txid = src.m_txid;	
-	m_vout = src.m_vout;
 	m_height = src.m_height;
 	m_coinbase = src.m_coinbase;
 	m_scriptPubKey = src.m_scriptPubKey;
@@ -78,7 +77,7 @@ void UTXO::setScriptPubKey()
 	m_scriptStart = m_inputValue.decode(2, nSize);	
 	
 	// The script is comprised of the remaining bytes in the retrieved value
-	m_inputValue.remainingBytesFromIndex((size_t) m_scriptStart, in);
+	m_inputValue.remainingBytesFromIndex(m_scriptStart, in);
 	
 	// There are 6 special script types. Outside these 6, the entire script is present
 	m_scriptType = nSize[0] < 6 ? nSize[0] : 6;
