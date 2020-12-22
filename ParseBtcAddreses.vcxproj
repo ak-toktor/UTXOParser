@@ -154,12 +154,14 @@
   <ItemGroup>
     <ClCompile Include="DbWrapper.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Utxo.cpp" />
     <ClCompile Include="Varint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DbWrapper.h" />
     <ClInclude Include="DbWrapperException.h" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="Utxo.h" />
     <ClInclude Include="Varint.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

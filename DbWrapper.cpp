@@ -5,6 +5,7 @@
 
 #include "DbWrapper.h"
 #include "utils.h"
+#include "Utxo.h"
 #include "DbWrapperException.h"
 
 DBWrapper::DBWrapper(const std::filesystem::path& dbName) 
