@@ -50,7 +50,7 @@ void DBWrapper::openDB()
 	m_readOptions.verify_checksums = true;
 }
 
-void DBWrapper::read(std::string const& key, std::string& val)
+void DBWrapper::read(const std::string& key, std::string& val)
 {
 	leveldb::Status status = m_db->Get(m_readOptions, key, &val);
 	if (!m_status.ok()) {
@@ -61,28 +61,29 @@ void DBWrapper::read(std::string const& key, std::string& val)
 	}
 }
 
-void DBWrapper::dumpAllUTXOs(const std::filesystem::path& path)
-{
+void DBWrapper::dumpAllUTXOs(const std::filesystem::path& path) {
 	std::unique_ptr<leveldb::Iterator> it(m_db->NewIterator(m_readOptions));
 	std::ofstream file(path);
 	for (it->SeekToFirst(); it->Valid(); it->Next()) {
-
-		BytesVec key;
-		for (size_t i = 0; i < it->key().size(); i++) {
-			key.push_back(it->key()[i]);
-		} 
-		if (key[0] == 0x43) {
+		const size_t keySize = 33;
+		auto key = it->key();
+		const char* keyData = key.data();
+		if (keyData[0] == 'C') { // from the https://en.bitcoin.it/wiki/Bitcoin_Core_0.11_(ch_2):_Data_Storage
 			BytesVec deObfuscatedValue;
+			deObfuscatedValue.reserve(it->value().size());
 			deObfuscate(it->value(), deObfuscatedValue);
 			Varint v(deObfuscatedValue);
-			UTXO u(v);
 			BytesVec txid;
-			assert(key.size() > 33);
-			txid.insert(txid.begin(), key.begin() + 1, key.begin() + 33);
+			assert(key.size() > keySize);
+			txid.insert(txid.begin(), keyData + 1, keyData + keySize);
 			utils::switchEndianness(txid);
+			UTXO u(v);
 			u.setTXID(txid);
 			if (u.getAmount()) {
-				file << u.getPublicKey() << "," << u.getAmount() << std::endl;
+				const auto& pubKey = u.getPublicKey();
+				std::string scriptPubKeyStr;
+				utils::bytesToHexstring(pubKey, scriptPubKeyStr);
+				file << scriptPubKeyStr << "," << u.getAmount() << std::endl;
 			}
 		}
 	}
