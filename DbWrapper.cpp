@@ -70,6 +70,7 @@ void DBWrapper::dumpAllUTXOs(const std::filesystem::path& path) {
 		auto key = it->key();
 		const char* keyData = key.data();
 		if (keyData[0] == 'C') { // from the https://en.bitcoin.it/wiki/Bitcoin_Core_0.11_(ch_2):_Data_Storage
+			
 			BytesVec deObfuscatedValue;
 			deObfuscatedValue.reserve(it->value().size());
 			deObfuscate(it->value(), deObfuscatedValue);
@@ -79,8 +80,8 @@ void DBWrapper::dumpAllUTXOs(const std::filesystem::path& path) {
 			txid.insert(txid.begin(), keyData + 1, keyData + keySize);
 			utils::switchEndianness(txid);
 			UTXO u(v);
-			u.setTXID(txid);
 			if (u.getAmount()) {
+				u.setTXID(txid);
 				const auto& pubKey = u.getPublicKey();
 				std::string scriptPubKeyStr;
 				utils::bytesToHexstring(pubKey, scriptPubKeyStr);

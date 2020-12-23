@@ -8,17 +8,6 @@ UTXO::UTXO(Varint<std::vector<unsigned char>>& inputValue)
 	setScriptPubKey();
 }
 
-UTXO::UTXO(const UTXO& src)
-{
-	m_txid = src.m_txid;	
-	m_height = src.m_height;
-	m_coinbase = src.m_coinbase;
-	m_scriptPubKey = src.m_scriptPubKey;
-	m_amount = src.m_amount;
-	m_scriptType = src.m_scriptType;
-	m_inputValue = src.m_inputValue;
-}
-
 void UTXO::setHeight()
 {
 	std::vector<unsigned char> first;
@@ -111,12 +100,11 @@ void UTXO::setScriptPubKey()
 	case 0x05:// PKPK: upcoming data is an uncompressed public key
 		break;
 	default: // Upcoming script is custom, made up of nSize bytes
-		break;
 		assert(m_scriptType == 6);
-		
 		// Convert nSize (vector of bytes)
 		auto customScriptSize = static_cast<size_t>(utils::toUint64(nSize) - 6);
-		if (customScriptSize) {
+		const int minimumScriptPubKeySize = 20;
+		if (customScriptSize > minimumScriptPubKeySize) {
 			m_scriptPubKey.resize(customScriptSize);
 			memcpy(&m_scriptPubKey[0], in.data() + 1, customScriptSize);
 		}

@@ -3,3 +3,4 @@ Debug
 Release
 *.filters
 *.user
+leveldb

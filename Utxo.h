@@ -5,12 +5,14 @@
 
 class UTXO {
 public:
-	UTXO(const UTXO& src);
 	UTXO(Varint<std::vector<unsigned char>>& inputValue);
 	void scriptDescription(size_t type, std::string& desc);
 	void getDbValue(std::string& dbValue);
 	void setTXID(const std::vector<unsigned char>& txid);
-    uint64_t getAmount() const;
+	uint64_t getHeight() const {
+		return m_height;
+	}
+	uint64_t getAmount() const;
     const std::vector<unsigned char>& getPublicKey() const;
 
 private:	
